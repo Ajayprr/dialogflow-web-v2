@@ -376,6 +376,7 @@ import Suggestion from '@/Components/Rich/Suggestion.vue'
 import * as uuidv1 from 'uuid/v1'
 
 import { Client } from 'dialogflow-gateway'
+import { Howl } from 'howler'
 
 export default {
     name: 'App',
@@ -536,10 +537,35 @@ export default {
         handle(response){
             /* This function is used for speech output */
             if (response.outputAudio){
-                const output = new Audio(`data:audio/mp3;base64,${response.outputAudio}`)
-                output.onended = () => this.$refs.input.listen()
+                const sound = new Howl({
+                    src: `data:audio/mp3;base64,${response.outputAudio}`
+                })
 
-                if (!this.muted) output.play()
+                sound.on('end', () => this.$refs.input.listen())
+                if (!this.muted) sound.play()
+            }
+
+            if (response.ssmlAudio && response.ssmlAudio.length > 0){
+                let current = 1
+                const playNext = () => {
+                    if (current !== queue.length){
+                        queue[current].play()
+                        current++
+                    }
+
+                    else this.$refs.input.listen()
+                }
+
+                const queue = response.ssmlAudio.map(audio => {
+                    return new Howl({
+                        src: `data:audio/mp3;base64,${audio}`,
+                        onend(){
+                            playNext()
+                        }
+                    })
+                })
+
+                if (!this.muted) queue[0].play()
             }
 
             else {
