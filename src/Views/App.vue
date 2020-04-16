@@ -538,7 +538,7 @@ export default {
             /* This function is used for speech output */
             if (response.outputAudio){
                 const sound = new Howl({
-                    src: `data:audio/mp3;base64,${response.outputAudio}`
+                    src: `data:audio/wav;base64,${response.outputAudio}`
                 })
 
                 sound.on('end', () => this.$refs.input.listen())
@@ -558,7 +558,7 @@ export default {
 
                 const queue = response.ssmlAudio.map(audio => {
                     return new Howl({
-                        src: `data:audio/mp3;base64,${audio}`,
+                        src: `data:audio/wav;base64,${audio}`,
                         onend(){
                             playNext()
                         }
