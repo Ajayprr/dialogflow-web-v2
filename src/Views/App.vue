@@ -545,29 +545,6 @@ export default {
                 if (!this.muted) sound.play()
             }
 
-            if (response.ssmlAudio && response.ssmlAudio.length > 0){
-                let current = 1
-                const playNext = () => {
-                    if (current !== queue.length){
-                        queue[current].play()
-                        current++
-                    }
-
-                    else this.$refs.input.listen()
-                }
-
-                const queue = response.ssmlAudio.map(audio => {
-                    return new Howl({
-                        src: `data:audio/wav;base64,${audio}`,
-                        onend(){
-                            playNext()
-                        }
-                    })
-                })
-
-                if (!this.muted) queue[0].play()
-            }
-
             else {
                 let text // <- init a text variable
 
